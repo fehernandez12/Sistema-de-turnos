@@ -1,10 +1,10 @@
 import sys
 
-fila_depositos = []
-fila_aperturas = []
+fila_depositos = {}
+fila_aperturas = {}
 
 def _menu():
-    print('Bienvenido a BanPlatzi')
+    print('\n\n\nBienvenido a BanPlatzi')
     print('Selecciona una opción:')
     print('[1] Agregar cliente a la fila de depósitos')
     print('[2] Agregar cliente a la fila de aperturas')
@@ -34,43 +34,59 @@ def _ya_tiene_turno(nombre_cliente):
 def agregar_cliente(tipo_turno, nombre_cliente):
     global fila_depositos
     global fila_aperturas
+    n = False
+    if len(fila_aperturas) > 0 and len(fila_depositos) > 0:  
+        for val1 in fila_depositos.values():
+            if val1 == nombre_cliente:
+                n = True
+            else:
+                n = False
+        for val2 in fila_aperturas.values():
+            if val2 == nombre_cliente:
+                n = True
+            else:
+                n = False
 
-    if nombre_cliente not in fila_depositos and nombre_cliente not in fila_aperturas:
+    if n == False:
         if tipo_turno == 1:
-            fila_depositos.append(nombre_cliente)
-            print('El cliente {} tiene el turno número '.format(nombre_cliente) + 'D' + str(fila_depositos.index(nombre_cliente) + 1))
+            l1 = len(fila_depositos) + 1
+            t1 = 'D' + str(l1)
+            fila_depositos[t1] = nombre_cliente
+            print(('El cliente {} tiene el turno número ' + t1).format(nombre_cliente))
         elif tipo_turno == 2:
-            fila_aperturas.append(nombre_cliente)
-            print('El cliente {} tiene el turno número '.format(nombre_cliente) + 'A' + str(fila_aperturas.index(nombre_cliente) + 1))
+            l2 = len(fila_aperturas) + 1
+            t2 = 'A' + str(l2)
+            fila_aperturas[t2] = nombre_cliente
+            print(('El cliente {} tiene el turno número ' + t2).format(nombre_cliente))
     else:
         _ya_tiene_turno(nombre_cliente)
 
 def atender_cliente():
     global fila_aperturas
     global fila_depositos
-
-    if len(fila_aperturas) != 0:
-        indice_turno = fila_aperturas.index(fila_aperturas[0])
-        print('Atendiendo al turno A' + str(indice_turno + 1))
-        print(fila_aperturas[-1])
-        fila_aperturas.pop(0)
+    if len(fila_aperturas) == 0 and len(fila_depositos) == 0:
+        print('No hay clientes para atender')
+    elif len(fila_aperturas) != 0:
+        first = next(iter(fila_aperturas))
+        print('Atendiendo al turno ' + first)
+        fila_aperturas.pop(first)
     else:
-        indice_turno = fila_depositos.index(fila_depositos[0])
-        print('Atendiendo al turno D' + str(indice_turno + 1))
-        print(fila_depositos[0])
-        fila_depositos.pop(0)
+        first = next(iter(fila_depositos))
+        print('Atendiendo al turno ' + first)
+        fila_depositos.pop(first)
 
 def listar_clientes():
     global fila_aperturas
     global fila_depositos
 
     print('Clientes para depósitos:')
-    for cliente in fila_depositos:
-        print(cliente)
+    for key, value in fila_depositos.items():
+        print(("Turno: {}  | Nombre: {}").format(key, value))
 
     print('Clientes para aperturas:')
-    for cliente in fila_aperturas:
-        print(cliente)
+    for key, value in fila_aperturas.items():
+        print(("Turno: {}  | Nombre: {}").format(key, value))
+
 
 if __name__ == '__main__':
     salir = False
